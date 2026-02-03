@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asking You Out</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #e0b3ff, #f0e6ff); /* Light purple gradient */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            position: relative;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #8a2be2; /* Deeper purple for headings */
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .guide {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .yes {
+            background: #ff69b4; /* Pink for yes */
+            color: white;
+        }
+        .yes:hover {
+            background: #ff1493;
+            transform: scale(1.1);
+        }
+        .no {
+            background: #dda0dd; /* Light purple for no */
+            color: white;
+        }
+        .no:hover {
+            background: #ba55d3;
+            transform: scale(1.1);
+        }
+        .confirm-yes {
+            background: #ff69b4; /* Pink for confirming no */
+            color: white;
+        }
+        .confirm-yes:hover {
+            background: #ff1493;
+            transform: scale(1.1);
+        }
+        .confirm-no {
+            background: #dda0dd; /* Light purple for back */
+            color: white;
+        }
+        .confirm-no:hover {
+            background: #ba55d3;
+            transform: scale(1.1);
+        }
+        .beg-yes {
+            background: #ff69b4; /* Pink for reconsidering */
+            color: white;
+        }
+        .beg-yes:hover {
+            background: #ff1493;
+            transform: scale(1.1);
+        }
+        .beg-no {
+            background: #dda0dd; /* Light purple for final no */
+            color: white;
+        }
+        .beg-no:hover {
+            background: #ba55d3;
+            transform: scale(1.1);
+        }
+        .heart {
+            position: absolute;
+            font-size: 2em;
+            color: #ff69b4;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        /* Hide the forms, main content, confirmation, and begging screens initially */
+        form, #mainContent, #confirmationScreen, #beggingScreen, #beggingScreen2 { display: none; }
+        /* Password screen styles */
+        #passwordScreen {
+            display: block;
+        }
+        input {
+            padding: 10px;
+            font-size: 1.1em;
+            border: 2px solid #8a2be2;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            width: 200px;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Screen -->
+    <div id="passwordScreen" class="container">
+        <h1>Secret Access</h1>
+        <p>Enter the 4-digit secret code to continue:</p>
+        <input type="password" id="passwordInput" maxlength="4">
+        <br>
+        <button class="yes" onclick="checkPassword()">Yes</button>
+        <p id="errorMessage" class="error" style="display: none;">Wrong code! Try again.</p>
+        <p class="guide">Enter the code and click Yes to unlock the proposal.</p>
+    </div>
+
+    <!-- Main Proposal Content (Hidden Initially) -->
+    <div id="mainContent" class="container">
+        <h1>Hey [Crush's Name], Will You Go on a Date with Me?</h1>
+        <p>I've been thinking about you a lot, and I'd love to take you out for [your date idea, e.g., dinner and a walk in the park]. What do you say?</p>
+        <div class="buttons">
+            <button class="yes" onclick="submitFormYes()">Yes</button>
+            <button class="no" onclick="showConfirmation()">No</button>
+        </div>
+        <p class="guide">Click Yes if you're excited! Click No if you need more time.</p>
+    </div>
+
+    <!-- Confirmation Screen for No (Hidden Initially) -->
+    <div id="confirmationScreen" class="container">
+        <h1>Are You Sure?</h1>
+        <p>Think about it... maybe give it a chance? 😊</p>
+        <div class="buttons">
+            <button class="confirm-yes" onclick="showBegging()">Yes</button>
+            <button class="confirm-no" onclick="backToMain()">No</button>
+        </div>
+        <p class="guide">If you still want to say no, click Yes. If you changed your mind, click No.</p>
+    </div>
+
+    <!-- First Begging Screen (Hidden Initially) -->
+    <div id="beggingScreen" class="container">
+        <h1>Please Reconsider! 🙏</h1>
+        <p>Come on, it'll be fun! Just one date? I promise it'll be worth it! 💕</p>
+        <div class="buttons">
+            <button class="beg-yes" onclick="backToMain()">Yes</button>
+            <button class="beg-no" onclick="showBegging2()">No</button>
+        </div>
+        <p class="guide">Click Yes to go back and say yes! Click No to see more reasons.</p>
+    </div>
+
+    <!-- Second Begging Screen (Hidden Initially) -->
+    <div id="beggingScreen2" class="container">
+        <h1>One More Try! 😢</h1>
+        <p>Pretty please? I've got great plans, and I really like you! Let's make some memories! 🌟</p>
+        <div class="buttons">
+            <button class="beg-yes" onclick="backToMain()">Yes</button>
+            <button class="beg-no" onclick="finalNo()">No</button>
+        </div>
+        <p class="guide">Click Yes to reconsider! Click No if you're absolutely sure.</p>
+    </div>
+
+    <!-- Hidden forms for notifications -->
+    <!-- Recipient email is set to jeffryljamesgjimenez@gmail.com in your Formspree account -->
+    <form id="notificationFormYes" action="https://formspree.io/f/xqelolyz" method="POST">
+        <input type="hidden" name="message" value="Someone clicked Yes on your date proposal!">
+        <input type="hidden" name="_next" value="https://yourwebsite.com/thanks.html"> <!-- Optional: Redirect after submit -->
+        <input type="hidden" name="_subject" value="Date Proposal Alert!">
+    </form>
+
+    <form id="notificationFormNo" action="https://formspree.io/f/xqelolyz" method="POST">
+        <input type="hidden" name="message" value="Someone clicked No on your date proposal!">
+        <input type="hidden" name="_next" value="https://yourwebsite.com/thanks.html"> <!-- Optional: Redirect after submit -->
+        <input type="hidden" name="_subject" value="Date Proposal Alert!">
+    </form>
+
+    <!-- Floating hearts animation (only show after password) -->
+    <div id="hearts" style="display: none;">
+        <div class="heart" style="top: 10%; left: 10%;">❤️</div>
+        <div class="heart" style="top: 20%; right: 15%; animation-delay: 1s;">💜</div>
+        <div class="heart" style="bottom: 15%; left: 20%; animation-delay: 2s;">💖</div>
+        <div class="heart" style="bottom: 25%; right: 10%; animation-delay: 0.5s;">💕</div>
+    </div>
+
+    <script>
+        const correctPassword = "1234"; // Change this to your 4-digit password!
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === correctPassword && input.length === 4) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('hearts').style.display = 'block';
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        }
+
+        function submitFormYes() {
+            document.getElementById('notificationFormYes').submit();
+            alert('Yay! I\'ve been notified—let\'s plan it!');
+        }
+
+        function showConfirmation() {
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('confirmationScreen').style.display = 'block';
+        }
+
+        function showBegging() {
+            document.getElementById('confirmationScreen').style.display = 'none';
+            document.getElementById('beggingScreen').style.display = 'block';
+        }
+
+        function showBegging2() {
+            document.getElementById('beggingScreen').style.display = 'none';
+            document.getElementById('beggingScreen2').style.display = 'block';
+        }
+
+        function backToMain() {
+            document.getElementById('confirmationScreen').style.display = 'none';
+            document.getElementById('beggingScreen').style.display = 'none';
+            document.getElementById('beggingScreen2').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        function finalNo() {
+            document.getElementById('notificationFormNo').submit();
+            alert('No worries, maybe another time!');
+        }
+    </script>
+</body>
+</html>

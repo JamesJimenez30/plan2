@@ -4,37 +4,273 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asking You Out</title>
+
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #e0b3ff, #f0e6ff); /* Light purple gradient */
-            color: #333;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0b3ff, #f0e6ff);
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
         }
+
         .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 24px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            position: relative;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-sizing: border-box;
         }
+
         h1 {
-            font-size: 2.5em;
-            color: #8a2be2; /* Deeper purple for headings */
-            margin-bottom: 20px;
+            color: #8a2be2;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: 15px;
         }
+
         p {
-            font-size: 1.2em;
+            font-size: clamp(1rem, 3.5vw, 1.2rem);
             line-height: 1.6;
-            margin-bottom: 30px;
+        }
+
+        .guide {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 14px 26px;
+            font-size: 1.05em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .yes, .confirm-yes, .beg-yes {
+            background: #ff69b4;
+            color: white;
+        }
+
+        .yes:hover, .confirm-yes:hover, .beg-yes:hover {
+            background: #ff1493;
+            transform: scale(1.05);
+        }
+
+        .no, .confirm-no, .beg-no {
+            background: #dda0dd;
+            color: white;
+        }
+
+        .no:hover, .confirm-no:hover, .beg-no:hover {
+            background: #ba55d3;
+            transform: scale(1.05);
+        }
+
+        input {
+            padding: 10px;
+            font-size: 1.1em;
+            border: 2px solid #8a2be2;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 220px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9em;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2em;
+            color: #ff69b4;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        form,
+        #mainContent,
+        #confirmationScreen,
+        #beggingScreen,
+        #beggingScreen2 {
+            display: none;
+        }
+
+        #passwordScreen {
+            display: block;
+        }
+
+        #hearts {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            button {
+                width: 100%;
+                max-width: 260px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PASSWORD SCREEN -->
+    <div id="passwordScreen" class="container">
+        <h1>Secret Access</h1>
+        <p>Enter the 4-digit secret code to continue:</p>
+
+        <input
+            type="password"
+            id="passwordInput"
+            maxlength="4"
+            inputmode="numeric"
+            pattern="[0-9]*"
+        >
+
+        <button class="yes" onclick="checkPassword()">Yes</button>
+
+        <p id="errorMessage" class="error" style="display:none;">Wrong code! Try again.</p>
+        <p class="guide">Enter the code and click Yes to unlock the proposal.</p>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="mainContent" class="container">
+        <h1>Hey [Crush's Name], Will You Go on a Date with Me?</h1>
+        <p>I’ve been thinking about you a lot, and I’d love to take you out. What do you say?</p>
+
+        <div class="buttons">
+            <button class="yes" onclick="submitFormYes()">Yes</button>
+            <button class="no" onclick="showConfirmation()">No</button>
+        </div>
+
+        <p class="guide">Be honest 😌</p>
+    </div>
+
+    <!-- CONFIRMATION -->
+    <div id="confirmationScreen" class="container">
+        <h1>Are You Sure? 🥺</h1>
+        <p>Maybe give it a chance?</p>
+
+        <div class="buttons">
+            <button class="confirm-yes" onclick="showBegging()">Yes</button>
+            <button class="confirm-no" onclick="backToMain()">No</button>
+        </div>
+    </div>
+
+    <!-- BEGGING 1 -->
+    <div id="beggingScreen" class="container">
+        <h1>Please 😭</h1>
+        <p>Just one date?</p>
+
+        <div class="buttons">
+            <button class="beg-yes" onclick="backToMain()">Yes</button>
+            <button class="beg-no" onclick="showBegging2()">No</button>
+        </div>
+    </div>
+
+    <!-- BEGGING 2 -->
+    <div id="beggingScreen2" class="container">
+        <h1>Last Try 😢</h1>
+        <p>I promise it’ll be fun.</p>
+
+        <div class="buttons">
+            <button class="beg-yes" onclick="backToMain()">Yes</button>
+            <button class="beg-no" onclick="finalNo()">No</button>
+        </div>
+    </div>
+
+    <!-- FORMS -->
+    <form id="notificationFormYes" action="https://formspree.io/f/xqelolyz" method="POST">
+        <input type="hidden" name="message" value="Someone clicked YES 💖">
+    </form>
+
+    <form id="notificationFormNo" action="https://formspree.io/f/xqelolyz" method="POST">
+        <input type="hidden" name="message" value="Someone clicked NO 💔">
+    </form>
+
+    <!-- HEARTS -->
+    <div id="hearts">
+        <div class="heart" style="top:10%; left:10%;">❤️</div>
+        <div class="heart" style="top:20%; right:15%;">💜</div>
+        <div class="heart" style="bottom:15%; left:20%;">💖</div>
+        <div class="heart" style="bottom:25%; right:10%;">💕</div>
+    </div>
+
+    <script>
+        const correctPassword = "1234";
+
+        function checkPassword() {
+            const input = passwordInput.value;
+            if (input === correctPassword) {
+                passwordScreen.style.display = "none";
+                mainContent.style.display = "block";
+                hearts.style.display = "block";
+                errorMessage.style.display = "none";
+            } else {
+                errorMessage.style.display = "block";
+            }
+        }
+
+        function submitFormYes() {
+            notificationFormYes.submit();
+            alert("Yay! 💕");
+        }
+
+        function showConfirmation() {
+            mainContent.style.display = "none";
+            confirmationScreen.style.display = "block";
+        }
+
+        function showBegging() {
+            confirmationScreen.style.display = "none";
+            beggingScreen.style.display = "block";
+        }
+
+        function showBegging2() {
+            beggingScreen.style.display = "none";
+            beggingScreen2.style.display = "block";
+        }
+
+        function backToMain() {
+            confirmationScreen.style.display = "none";
+            beggingScreen.style.display = "none";
+            beggingScreen2.style.display = "none";
+            mainContent.style.display = "block";
+        }
+
+        function finalNo() {
+            notificationFormNo.submit();
+            alert("Maybe another time 💔");
+        }
+    </script>
+
+</body>
+</html>            margin-bottom: 30px;
         }
         .guide {
             font-size: 0.9em;
